@@ -1,0 +1,30 @@
+blueprint-io(7) -- centralized blueprint service
+================================================
+
+## SYNOPSIS
+
+TODO
+
+## DESCRIPTION
+
+TODO
+
+## OPTIONS
+
+TODO
+
+## FILES
+
+TODO
+
+## THEME SONG
+
+Girl Talk - "Let It Out"
+
+## AUTHOR
+
+Richard Crowley <richard@devstructure.com>
+
+## SEE ALSO
+
+`blueprint-io-server`(7) accepts `blueprint-push`(1) and `blueprint-pull`(1) requests, which `blueprint-io` adds to the `blueprint`(1) suite.
