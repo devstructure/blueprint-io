@@ -22,12 +22,12 @@ clean:
 install: install-lib install-man
 
 install-lib:
-	install -d $(DESTDIR)$(pydir)/blueprint/io
+	install -d $(DESTDIR)$(pydir)/blueprint_io
 	install -m644 \
-		blueprint/io/__init__.py \
-		$(DESTDIR)$(pydir)/blueprint/io
+		blueprint_io/__init__.py \
+		$(DESTDIR)$(pydir)/blueprint_io
 	PYTHONPATH=$(DESTDIR)$(pydir) $(PYTHON) -mcompileall \
-		$(DESTDIR)$(pydir)/blueprint/io
+		$(DESTDIR)$(pydir)/blueprint_io
 
 install-man:
 	install -d $(DESTDIR)$(mandir)/man7
@@ -37,9 +37,9 @@ uninstall: uninstall-lib uninstall-man
 
 uninstall-lib:
 	rm -f \
-		$(DESTDIR)$(pydir)/blueprint/io/__init__.py \
-		$(DESTDIR)$(pydir)/blueprint/io/__init__.pyc \
-	rmdir -p --ignore-fail-on-non-empty $(DESTDIR)$(pydir)/blueprint/io
+		$(DESTDIR)$(pydir)/blueprint_io/__init__.py \
+		$(DESTDIR)$(pydir)/blueprint_io/__init__.pyc \
+	rmdir -p --ignore-fail-on-non-empty $(DESTDIR)$(pydir)/blueprint_io
 
 uninstall-man:
 	rm -f $(DESTDIR)$(mandir)/man7/blueprint-io.7
