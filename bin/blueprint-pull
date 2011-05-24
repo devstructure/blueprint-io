@@ -1,0 +1,22 @@
+#!/usr/bin/python
+
+import logging
+import optparse
+import re
+import sys
+
+import blueprint
+import blueprint_io
+
+parser = optparse.OptionParser('Usage: %prog URL')
+
+(options, args) = parser.parse_args()
+
+
+if 1 != len(args):
+    parser.print_usage()
+    sys.exit(1)
+    
+# TODO: check for valid url
+
+name = args[0]
