@@ -43,13 +43,8 @@ def push(b):
     """
     
     # GET /secret
-    # Create a new secret key known only to the caller. This is the namespace beneath which the caller’s blueprints are stored.
-    # 
-    # Responses:
-    # 201: success; the body contains a new 64-byte secret key.
-    # 502: failure; the upstream storage service failed.
-
-    # TODO: check for local config
+    # Create a new secret key known only to the caller. 
+	# This is the namespace beneath which the caller’s blueprints are stored.
     
     r = requests.get(server + "/secret")
     if r.status_code == 201:
@@ -68,11 +63,7 @@ def push(b):
     #  Parameters:
     #  secret: a 64-byte identifier containing numbers, letters, underscores, and dashes.
     #  name: a blueprint name; it may not contain whitespace or / characters.
-    # 
-    #  Responses:
-    #  202: success; the blueprint was well-formed and stored; the body contains pre-signed URIs for uploading source tarballs.
-    #  400: failure; the blueprint was not well-formed.
-    #  502: failure; the upstream storage service failed.
+
  
     secret_url = server + '/' + secret + '/' + b.name
     
@@ -97,12 +88,7 @@ def push(b):
     # secret: a 64-byte identifier containing numbers, letters, underscores, and dashes.
     # name: a blueprint name; it may not contain whitespace or / characters.
     # sha: a 40-byte hexadecimal representation of a SHA1 sum.
-    # 
-    # Responses:
-    # 202: success; the tarball was stored.
-    # 400: failure; the SHA1 sum of the body did not match sha.
-    # 404: failure; the secret or blueprint name was not found.
-    # 502: failure; the upstream storage service failed.
+
     
     tree = git.tree(b._commit)
     for dirname, filename in sorted(b.sources.iteritems()):
