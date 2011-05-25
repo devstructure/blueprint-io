@@ -1,7 +1,7 @@
 import requests
 import logging
-
-default_url = "http://127.0.0.1:5000/"
+import cfg
+server = cfg.server()
 
 def pull():
     """
@@ -51,10 +51,10 @@ def push(b):
 
     # TODO: check for local config
     
-    r = requests.get(default_url + "secret")
+    r = requests.get(server + "/secret")
     if r.status_code == 201:
         secret = r.content.rstrip()
-        logging.info("SECRET: %s \n" % secret)
+        logging.info("SECRET KEY: %s \n" % secret)
     elif r.status_code == 502:
         logging.error('502: GET failure; the upstream storage service failed')
         return
@@ -74,7 +74,7 @@ def push(b):
     #  400: failure; the blueprint was not well-formed.
     #  502: failure; the upstream storage service failed.
  
-    secret_url = default_url + secret + '/' + b.name
+    secret_url = server + '/' + secret + '/' + b.name
     
     r = requests.put(secret_url, files = b)
     if r.status_code == 202:
