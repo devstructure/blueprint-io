@@ -19,13 +19,12 @@ clean:
 		blueprint/**.pyc \
 		man/man*/*.html
 
-install: install-lib install-man install-bin
+install: install-bin install-lib install-man
     
 install-bin:
 	install -d $(DESTDIR)$(bindir)
 	install bin/blueprint-pull $(DESTDIR)$(bindir)/
 	install bin/blueprint-push $(DESTDIR)$(bindir)/
-	install bin/blueprint $(DESTDIR)$(bindir)/
 
 install-lib:
 	install -d $(DESTDIR)$(pydir)/blueprint_io
@@ -39,7 +38,12 @@ install-man:
 	install -d $(DESTDIR)$(mandir)/man7
 	install -m644 man/man7/blueprint-io.7 $(DESTDIR)$(mandir)/man7/
 
-uninstall: uninstall-lib uninstall-man
+uninstall: uninstall-bin uninstall-lib uninstall-man
+    
+uninstall-bin:
+	rm -f \
+		$(DESTDIR)$(bindir)/blueprint-pull \
+		$(DESTDIR)$(bindir)/blueprint-push
 
 uninstall-lib:
 	rm -f \

@@ -8,7 +8,7 @@ import sys
 import blueprint
 import blueprint_io
 
-parser = optparse.OptionParser('Usage: %prog URL')
+parser = optparse.OptionParser('Usage: %prog <url>')
 
 (options, args) = parser.parse_args()
 
