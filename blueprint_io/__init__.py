@@ -1,6 +1,8 @@
 import requests
 import logging
 import cfg
+from blueprint import git
+
 server = cfg.server()
 
 def pull():
@@ -41,12 +43,13 @@ def push(b):
     Push a blueprint to server specified in /etc/blueprint-io-server.cfg,
     ~/.blueprint-io.cfg or default to https://devstructure.com
     """
-    
+
     # GET /secret
     # Create a new secret key known only to the caller. 
 	# This is the namespace beneath which the caller’s blueprints are stored.
     
-    r = requests.get(server + "/secret")
+    r = requests.get(url = server + "/secret")
+
     if r.status_code == 201:
         secret = r.content.rstrip()
         logging.info("SECRET KEY: %s \n" % secret)
@@ -63,13 +66,12 @@ def push(b):
     #  Parameters:
     #  secret: a 64-byte identifier containing numbers, letters, underscores, and dashes.
     #  name: a blueprint name; it may not contain whitespace or / characters.
-
- 
-    secret_url = server + '/' + secret + '/' + b.name
-    content_type = {'Content-type': 'application/json'}
-
     
-    r = requests.put(secret_url, headers = content_type, data = b)
+    r = requests.put(
+        url = server + '/' + secret + '/' + b.name, 
+        headers = {'Content-type': 'application/json'}, 
+        data = b.dumps())
+
     if r.status_code == 202:
         logging.info('Your blueprint JSON was stored on server, moving on to the blueprint files')
     elif r.status_code == 400:
@@ -91,16 +93,18 @@ def push(b):
     # name: a blueprint name; it may not contain whitespace or / characters.
     # sha: a 40-byte hexadecimal representation of a SHA1 sum.
 
-    # FIXME: not working
     tree = git.tree(b._commit)
     for dirname, filename in sorted(b.sources.iteritems()):
         blob = git.blob(tree, filename)
         content = git.content(blob)
-    
-    content_type = {'Content-type': 'application/x-tar'}
-    r = requests.put(secret_url + '/' + content, headers=content_type, files=content )
+        r = requests.put(
+            url = server + '/' + secret + '/' + b.name + '/' + content, 
+            headers = {'Content-type': 'application/x-tar'}, 
+            data=content )
+
     if r.status_code == 202:
-        logging.info('Your server blueprint was saved and can be retrieved from %s' % secret_url)
+        logging.info('Your server blueprint was saved and can be retrieved from %s' 
+            % server + '/' + secret + '/' + b.name)
     elif r.status_code == 400:
         logging.error('400: tarball PUT failure; the SHA1 sum of the body did not match sha')
     elif r.status_code == 404:
