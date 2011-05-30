@@ -16,7 +16,12 @@ parser = optparse.OptionParser('Usage: %prog <url>')
 if 1 != len(args):
     parser.print_usage()
     sys.exit(1)
-    
-# TODO: check for valid url
+url = args[0]
 
-name = args[0]
+# TODO: check for valid url
+# TODO: improve error handling
+    
+try:
+    blueprint_io.pull(url)
+except IOError:
+    pass

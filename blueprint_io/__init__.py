@@ -5,7 +5,7 @@ from blueprint import git
 
 server = cfg.server()
 
-def pull():
+def pull(url):
     """
     Pull a blueprint from the specified URL
     """
@@ -16,12 +16,17 @@ def pull():
     # Parameters:
     # secret: a 64-byte identifier containing numbers, letters, underscores, and dashes.
     # name: a blueprint name; it may not contain whitespace or / characters.
-    # 
-    # Responses:
-    # 200: success; the body contains the JSON representation of the blueprint name.
-    # 404: failure; the secret or blueprint name was not found.
-    # 
-    # 
+
+    r = requests.get(url)
+    if r.status_code == 200:
+        blueprint = r.content
+    elif r.status_code == 404:
+        logging.error("[404] A blueprint could not be pulled from %s" % url)
+        return
+    else:
+        logging.error("[%s] GET error" % r.status_code)
+        return
+
     # GET /secret/name/sha.tar
     # Fetch a source tarball referenced by blueprint name.
     # 
@@ -29,14 +34,24 @@ def pull():
     # secret: a 64-byte identifier containing numbers, letters, underscores, and dashes.
     # name: a blueprint name; it may not contain whitespace or / characters.
     # sha: a 40-byte hexadecimal representation of a SHA1 sum.
-    # 
-    # Responses:
-    # 200: success; the body contains the application/x-tar content of the source tarball.
-    # 404: failure; the secret, blueprint name, or sha was not found.
-    # 502: failure; the upstream storage service failed.
+
+    # http://127.0.0.1:5000/qFLVc2Gt7VTyPL0VLzO0evh5wRF7mK7EQyIOzA7aTapSC1XRHpJyaysv3EhPosLz/coffee
+
+    # TODO: extract sha.tar filename from blueprint json
+    filename = None
+    r = requests.get(url + '/' + filename)
+
+    if r.status_code == 200:
+        pass
+    elif r.status_code == 404:
+        logging.error("[404] The secret key, blueprint name or sha was not found")
+    elif r.status_code == 502:
+        logging.error("[502] The upstream storage service failed and the blueprint was not pulled")
+    else:
+        logging.error("[%s] GET error retreiving blueprint files" % r.status_code)
+        
     
-    
-    pass
+    return
 
 def push(b):
     """
@@ -53,10 +68,10 @@ def push(b):
     if r.status_code == 201:
         secret = r.content.rstrip()
     elif r.status_code == 502:
-        logging.error('502: GET failure; the upstream storage service failed')
+        logging.error('[502] GET failure; the upstream storage service failed')
         return
     else:
-        logging.error('GET failure')
+        logging.error('[%s] GET failure' % r.status_code)
         return
    
     # PUT /secret/name
@@ -74,13 +89,13 @@ def push(b):
     if r.status_code == 202:
         logging.info('Your blueprint JSON was stored on server, moving on to the blueprint files')
     elif r.status_code == 400:
-        logging.error('400: PUT failure; the blueprint was not well-formed')
+        logging.error('[400] PUT failure; the blueprint was not well-formed')
         return
     elif r.status_code == 502:
-        logging.error('502: json PUT failure; the upstream storage service failed')
+        logging.error('[502] json PUT failure; the upstream storage service failed')
         return
     else:
-        logging.error('json PUT failure')
+        logging.error('[%s] json PUT failure' % r.status_code)
         return
     
 
@@ -104,13 +119,13 @@ def push(b):
     if r.status_code == 202:
         logging.info('Your blueprint can be retrieved from: %s' % server + '/' + secret + '/' + b.name)
     elif r.status_code == 400:
-        logging.error('400: tarball PUT failure; the SHA1 sum of the body did not match sha')
+        logging.error('[400] tarball PUT failure; the SHA1 sum of the body did not match sha')
     elif r.status_code == 404:
-        logging.error('404: tarball PUT failure; the secret or blueprint name was not found')
+        logging.error('[404] tarball PUT failure; the secret or blueprint name was not found')
     elif r.status_code == 502:
-        logging.error('502: tarball PUT failurel the upstream storage service failed')
+        logging.error('[502] tarball PUT failurel the upstream storage service failed')
     else:
-        logging.error('tarball PUT failure')
+        logging.error('[%s] tarball PUT failure' % r.status_code)
     
     return
     
