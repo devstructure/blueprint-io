@@ -52,7 +52,6 @@ def push(b):
 
     if r.status_code == 201:
         secret = r.content.rstrip()
-        logging.info("SECRET KEY: %s \n" % secret)
     elif r.status_code == 502:
         logging.error('502: GET failure; the upstream storage service failed')
         return
@@ -98,13 +97,12 @@ def push(b):
         blob = git.blob(tree, filename)
         content = git.content(blob)
         r = requests.put(
-            url = server + '/' + secret + '/' + b.name + '/' + content, 
+            url = server + '/' + secret + '/' + b.name + '/' + filename, 
             headers = {'Content-type': 'application/x-tar'}, 
-            data=content )
+            data = content)
 
     if r.status_code == 202:
-        logging.info('Your server blueprint was saved and can be retrieved from %s' 
-            % server + '/' + secret + '/' + b.name)
+        logging.info('Your blueprint can be retrieved from: %s' % server + '/' + secret + '/' + b.name)
     elif r.status_code == 400:
         logging.error('400: tarball PUT failure; the SHA1 sum of the body did not match sha')
     elif r.status_code == 404:
