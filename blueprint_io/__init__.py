@@ -41,8 +41,8 @@ def pull(url):
         if r.status == 200:
             b = Blueprint()
             b.name = name = pieces.path.rpartition('/')[2]
-            b.update(JSON.loads(r.read()))
-            logging.info("Blueprint JSON pulled, checking for tarballs")
+            b.update(json.loads(r.read()))
+            logging.info("Blueprint json pulled, checking for tarballs")
 
             for filename in b.sources.itervalues():
                 logging.info("Downloading %s, this might take a while" % filename)
@@ -108,7 +108,7 @@ def push(b):
         return
    
     # PUT /secret/name
-    #  Store the JSON representation of the blueprint name. The Content-Type of the body must be application/JSON.
+    #  Store the JSON representation of the blueprint name. The Content-Type of the body must be application/json.
     # 
     #  Parameters:
     #  secret: a 64-byte identifier containing numbers, letters, underscores, and dashes.
