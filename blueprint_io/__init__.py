@@ -137,7 +137,8 @@ def secret():
         secret = r.read().rstrip()
         logging.warning('created secret {0}'.format(secret))
         logging.warning('store it in ~/.blueprint-io.cfg:')
-        sys.stderr.write('[default]\nsecret = {0}\n\n'.format(secret))
+        sys.stderr.write('\n[default]\nsecret = {0}\nserver = {1}\n\n'.
+            format(secret, cfg.server()))
         return secret
     elif 502 == r.status:
         logging.error('upstream storage service failed')
