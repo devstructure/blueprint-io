@@ -8,30 +8,49 @@ import urlparse
 import string
 
 import blueprint
+from blueprint import context_managers
 import blueprint_io
+from blueprint_io import cfg
 
-parser = optparse.OptionParser('Usage: %prog <url>')
-
-(options, args) = parser.parse_args()
-
+parser = optparse.OptionParser(
+    'Usage: %prog [-s <secret>] [-m <message>] [-q] <name>|<url>')
+parser.add_option('-s', '--secret',
+                  dest='secret',
+                  default=None,
+                  help='operate quietly')
+parser.add_option('-m', '--message',
+                  dest='message',
+                  default=None,
+                  help='commit message')
+parser.add_option('-q', '--quiet',
+                  dest='quiet',
+                  default=False,
+                  action='store_true',
+                  help='operate quietly')
+options, args = parser.parse_args()
 
 if 1 != len(args):
     parser.print_usage()
     sys.exit(1)
-url = args[0]
+url = urlparse.urlparse(args[0])
+if url.scheme and url.netloc:
+    match = re.match(r'^/([0-9A-Za-z_-]{64})/([^/ \t\r\n]+)$', url.path)
+    if match is None:
+        logging.error('invalid blueprint URL')
+        sys.exit(1)
+    secret, name = match.group(1, 2)
+else:
+    secret = options.secret or cfg.secret()
+    if secret is None:
+        logging.error('secret not found')
+        sys.exit(1)
+    name = args[0]
 
-pieces = urlparse.urlparse(url)
-if not all([pieces.scheme, pieces.netloc]):
-	logging.error("The URL is invalid")
-	sys.exit(1)
-if not set(pieces.netloc) <= set(string.letters + string.digits + '-.' + ':'):
-	logging.error("The URL has invalid characters")
-	sys.exit(1)
-if not pieces.scheme in ['http', 'https']:
-	logging.error("Please use http or https")
-	sys.exit(1)
-    
-try:
-    blueprint_io.pull(url)
-except IOError:
-    pass
+with context_managers.mkdtemp():
+    try:
+        b = blueprint_io.pull(secret, name)
+    except ValueError:
+        logging.error('invalid blueprint name')
+        sys.exit(1)
+    if b is not None:
+        b.commit(options.message or '')
