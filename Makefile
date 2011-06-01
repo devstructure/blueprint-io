@@ -31,6 +31,7 @@ install-lib:
 	install -m644 \
 		blueprint_io/__init__.py \
 		blueprint_io/cfg.py \
+		blueprint_io/http.py \
 		$(DESTDIR)$(pydir)/blueprint_io
 	PYTHONPATH=$(DESTDIR)$(pydir) $(PYTHON) -mcompileall \
 		$(DESTDIR)$(pydir)/blueprint_io
@@ -52,6 +53,8 @@ uninstall-lib:
 		$(DESTDIR)$(pydir)/blueprint_io/__init__.pyc \
 		$(DESTDIR)$(pydir)/blueprint_io/cfg.py \
 		$(DESTDIR)$(pydir)/blueprint_io/cfg.pyc \
+		$(DESTDIR)$(pydir)/blueprint_io/http.py \
+		$(DESTDIR)$(pydir)/blueprint_io/http.pyc \
 	rmdir -p --ignore-fail-on-non-empty $(DESTDIR)$(pydir)/blueprint_io
 
 uninstall-man:

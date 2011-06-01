@@ -1,8 +1,9 @@
 import cfg
 import json
 import logging
-import requests
 import urlparse
+
+import http
 
 from blueprint import git
 from blueprint import Blueprint
@@ -87,15 +88,15 @@ def push(b):
     # Create a new secret key known only to the caller. 
 	# This is the namespace beneath which the caller’s blueprints are stored.
     
-    r = requests.get(url = server + "/secret")
+    r = http.get("/secret")
 
-    if r.status_code == 201:
-        secret = r.content.rstrip()
-    elif r.status_code == 502:
+    if r.status == 201:
+        secret = r.read().rstrip()
+    elif r.status == 502:
         logging.error('[502] GET failure; the upstream storage service failed')
         return
     else:
-        logging.error('[%s] GET failure' % r.status_code)
+        logging.error('[%s] GET failure' % r.status)
         return
    
     # PUT /secret/name
@@ -105,21 +106,21 @@ def push(b):
     #  secret: a 64-byte identifier containing numbers, letters, underscores, and dashes.
     #  name: a blueprint name; it may not contain whitespace or / characters.
     
-    r = requests.put(
-        url = server + '/' + secret + '/' + b.name, 
-        headers = {'Content-type': 'application/json'}, 
-        data = b.dumps())
+    r = http.put(
+        url = '/' + secret + '/' + b.name,
+        body = b.dumps(),
+        headers = {'Content-type': 'application/json'} )
 
-    if r.status_code == 202:
+    if r.status == 202:
         logging.info('Your blueprint JSON was stored on server, moving on to the blueprint files')
-    elif r.status_code == 400:
+    elif r.status == 400:
         logging.error('[400] PUT failure; the blueprint was not well-formed')
         return
-    elif r.status_code == 502:
+    elif r.status == 502:
         logging.error('[502] json PUT failure; the upstream storage service failed')
         return
     else:
-        logging.error('[%s] json PUT failure' % r.status_code)
+        logging.error('[%s] json PUT failure' % r.status)
         return
     
 
@@ -135,21 +136,21 @@ def push(b):
     for dirname, filename in sorted(b.sources.iteritems()):
         blob = git.blob(tree, filename)
         content = git.content(blob)
-        r = requests.put(
-            url = server + '/' + secret + '/' + b.name + '/' + filename, 
-            headers = {'Content-type': 'application/x-tar'}, 
-            data = content)
+        r = http.put(
+            url = '/' + secret + '/' + b.name + '/' + filename,
+            body = content,
+            headers = {'Content-type': 'application/x-tar'})
 
-    if r.status_code == 202:
+    if r.status == 202:
         logging.info('Your blueprint can be retrieved from: %s' % server + '/' + secret + '/' + b.name)
-    elif r.status_code == 400:
+    elif r.status == 400:
         logging.error('[400] tarball PUT failure; the SHA1 sum of the body did not match sha')
-    elif r.status_code == 404:
+    elif r.status == 404:
         logging.error('[404] tarball PUT failure; the secret or blueprint name was not found')
-    elif r.status_code == 502:
+    elif r.status == 502:
         logging.error('[502] tarball PUT failurel the upstream storage service failed')
     else:
-        logging.error('[%s] tarball PUT failure' % r.status_code)
+        logging.error('[%s] tarball PUT failure' % r.status)
     
     return
     
