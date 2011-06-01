@@ -2,6 +2,10 @@ import requests
 import logging
 import cfg
 from blueprint import git
+from blueprint import Blueprint
+from blueprint import context_managers
+import urlparse
+import json
 
 server = cfg.server()
 
@@ -19,39 +23,47 @@ def pull(url):
 
     r = requests.get(url)
     if r.status_code == 200:
-        blueprint = r.content
+        b = Blueprint()
+        b.name = urlparse.urlparse(url).path.rpartition('/')[2]
+        b.update(json.loads(r.content))
+
+        # GET /secret/name/sha.tar
+        # Fetch a source tarball referenced by blueprint name.
+        # 
+        # Parameters:
+        # secret: a 64-byte identifier containing numbers, letters, underscores, and dashes.
+        # name: a blueprint name; it may not contain whitespace or / characters.
+        # sha: a 40-byte hexadecimal representation of a SHA1 sum.
+        # DEMO http://127.0.0.1:5000/qFLVc2Gt7VTyPL0VLzO0evh5wRF7mK7EQyIOzA7aTapSC1XRHpJyaysv3EhPosLz/coffee
+
+        for filename in b.sources.itervalues():
+            r = requests.get(url + '/' + filename)
+            if r.status_code == 200:
+                # store tarball in temp dir for blueprint inclusion
+
+            elif r.status_code == 404:
+                logging.error("[404] The sha tarball was not found")
+                return
+
+            elif r.status_code == 502:
+                logging.error("[502] The upstream storage service failed and the blueprint was not pulled")
+                return
+
+            else:
+                logging.error("[%s] GET error retreiving blueprint files" % r.status_code)
+                return
+
     elif r.status_code == 404:
         logging.error("[404] A blueprint could not be pulled from %s" % url)
         return
+
     else:
         logging.error("[%s] GET error" % r.status_code)
+        logging.error(r.history)
         return
 
-    # GET /secret/name/sha.tar
-    # Fetch a source tarball referenced by blueprint name.
-    # 
-    # Parameters:
-    # secret: a 64-byte identifier containing numbers, letters, underscores, and dashes.
-    # name: a blueprint name; it may not contain whitespace or / characters.
-    # sha: a 40-byte hexadecimal representation of a SHA1 sum.
-
-    # http://127.0.0.1:5000/qFLVc2Gt7VTyPL0VLzO0evh5wRF7mK7EQyIOzA7aTapSC1XRHpJyaysv3EhPosLz/coffee
-
-    # TODO: extract sha.tar filename from blueprint json
-    filename = None
-    r = requests.get(url + '/' + filename)
-
-    if r.status_code == 200:
-        pass
-    elif r.status_code == 404:
-        logging.error("[404] The secret key, blueprint name or sha was not found")
-    elif r.status_code == 502:
-        logging.error("[502] The upstream storage service failed and the blueprint was not pulled")
-    else:
-        logging.error("[%s] GET error retreiving blueprint files" % r.status_code)
-        
-    
     return
+
 
 def push(b):
     """

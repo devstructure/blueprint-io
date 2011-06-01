@@ -24,7 +24,7 @@ pieces = urlparse.urlparse(url)
 if not all([pieces.scheme, pieces.netloc]):
 	logging.error("The URL is invalid")
 	sys.exit(1)
-if not set(pieces.netloc) <= set(string.letters + string.digits + '-.'):
+if not set(pieces.netloc) <= set(string.letters + string.digits + '-.' + ':'):
 	logging.error("The URL has invalid characters")
 	sys.exit(1)
 if not pieces.scheme in ['http', 'https']:
