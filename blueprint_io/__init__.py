@@ -1,5 +1,5 @@
 import cfg
-import JSON
+import json
 import logging
 import urlparse
 
