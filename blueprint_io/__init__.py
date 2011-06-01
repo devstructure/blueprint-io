@@ -1,11 +1,12 @@
-import requests
-import logging
 import cfg
+import json
+import logging
+import requests
+import urlparse
+
 from blueprint import git
 from blueprint import Blueprint
 from blueprint import context_managers
-import urlparse
-import json
 
 server = cfg.server()
 
@@ -20,47 +21,58 @@ def pull(url):
     # Parameters:
     # secret: a 64-byte identifier containing numbers, letters, underscores, and dashes.
     # name: a blueprint name; it may not contain whitespace or / characters.
+    #
+    # DEMO http://127.0.0.1:5000/qFLVc2Gt7VTyPL0VLzO0evh5wRF7mK7EQyIOzA7aTapSC1XRHpJyaysv3EhPosLz/coffee
+    #
+    # GET /secret/name/sha.tar
+    # Fetch a source tarball referenced by blueprint name.
+    # 
+    # Parameters:
+    # secret: a 64-byte identifier containing numbers, letters, underscores, and dashes.
+    # name: a blueprint name; it may not contain whitespace or / characters.
+    # sha: a 40-byte hexadecimal representation of a SHA1 sum.
 
-    r = requests.get(url)
-    if r.status_code == 200:
-        b = Blueprint()
-        b.name = urlparse.urlparse(url).path.rpartition('/')[2]
-        b.update(json.loads(r.content))
+    with context_managers.mkdtemp():
+        r = requests.get(url)
 
-        # GET /secret/name/sha.tar
-        # Fetch a source tarball referenced by blueprint name.
-        # 
-        # Parameters:
-        # secret: a 64-byte identifier containing numbers, letters, underscores, and dashes.
-        # name: a blueprint name; it may not contain whitespace or / characters.
-        # sha: a 40-byte hexadecimal representation of a SHA1 sum.
-        # DEMO http://127.0.0.1:5000/qFLVc2Gt7VTyPL0VLzO0evh5wRF7mK7EQyIOzA7aTapSC1XRHpJyaysv3EhPosLz/coffee
+        if r.status_code == 200:
+            b = Blueprint(name = urlparse.urlparse(url).path.rpartition('/')[2])
+            b.update(json.loads(r.content))
 
-        for filename in b.sources.itervalues():
-            r = requests.get(url + '/' + filename)
-            if r.status_code == 200:
-                # store tarball in temp dir for blueprint inclusion
+            for filename in b.sources.itervalues():
+                r = requests.get(url + '/' + filename)
 
-            elif r.status_code == 404:
-                logging.error("[404] The sha tarball was not found")
-                return
+                if r.status_code == 200:
+                    try:
+                        tarfile = open(filename, 'w')
+                        tarfile.write(r.content)
+                    except OSError:
+                        return
+                    finally:
+                        tarfile.close()
 
-            elif r.status_code == 502:
-                logging.error("[502] The upstream storage service failed and the blueprint was not pulled")
-                return
+                elif r.status_code == 404:
+                    logging.error("[404] The sha tarball was not found")
+                    return
 
-            else:
-                logging.error("[%s] GET error retreiving blueprint files" % r.status_code)
-                return
+                elif r.status_code == 502:
+                    logging.error("[502] The upstream storage service failed and the blueprint was not pulled")
+                    return
 
-    elif r.status_code == 404:
-        logging.error("[404] A blueprint could not be pulled from %s" % url)
-        return
+                else:
+                    logging.error("[%s] GET error retreiving blueprint files" % r.status_code)
+                    return
 
-    else:
-        logging.error("[%s] GET error" % r.status_code)
-        logging.error(r.history)
-        return
+            b.commit('')
+
+        elif r.status_code == 404:
+            logging.error("[404] A blueprint could not be pulled from %s" % url)
+            return
+
+        else:
+            logging.error("[%s] GET error" % r.status_code)
+            logging.error(r.history)
+            return
 
     return
 
