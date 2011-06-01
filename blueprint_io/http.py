@@ -3,8 +3,6 @@ import urlparse
 
 import cfg
 
-
-# FIXME: fix server configs to handle port
 def connect(server):
     if not server:
         server = urlparse.urlparse(cfg.server()).netloc
@@ -14,7 +12,7 @@ def get(url, headers={}, server=None):
     c = connect(server)
     c.request("GET", url, None, headers)
     r = c.getresponse()
-    # handle redirects
+    # Handle redirects
     while r.status in set([301, 302, 307]):
        pieces = urlparse.urlparse(r.getheader('location'))
        headers = {'Content-type': r.getheader('content-type')}

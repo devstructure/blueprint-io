@@ -30,9 +30,6 @@ if not set(pieces.netloc) <= set(string.letters + string.digits + '-.' + ':'):
 if not pieces.scheme in ['http', 'https']:
 	logging.error("Please use http or https")
 	sys.exit(1)
-
-
-# TODO: improve error handling
     
 try:
     blueprint_io.pull(url)
