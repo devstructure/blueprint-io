@@ -1,32 +1,40 @@
 import httplib
+import urlparse
 
 import cfg
 
-server = cfg.server()
 
 # FIXME: fix server configs to handle port
-def connect():
-    return httplib.HTTPConnection("127.0.0.1", "5000")
+def connect(server):
+    if not server:
+        server = urlparse.urlparse(cfg.server()).netloc
+    return httplib.HTTPConnection(server)
 
-def get(url, headers={}):
-    c = connect()
+def get(url, headers={}, server=None):
+    c = connect(server)
     c.request("GET", url, None, headers)
-    return c.getresponse()
+    r = c.getresponse()
+    # handle redirects
+    while r.status in set([301, 302, 307]):
+       pieces = urlparse.urlparse(r.getheader('location'))
+       headers = {'Content-type': r.getheader('content-type')}
+       r = get(pieces.path, headers, pieces.netloc)
+    return r
 
-def post(url, body, headers={}):
-    c = connect()
+def post(url, body, headers={}, server=None):
+    c = connect(server)
     c.request('POST', url, body, headers)
     return c.getresponse()
 
-def put(url, body, headers={}):
-    c = connect()
+def put(url, body, headers={}, server=None):
+    c = connect(server)
     if len(body) > 0:
         c.request("PUT", url, body, headers)
     else:
         c.request("PUT", url, body)
     return c.getresponse()
 
-def delete(url):
-    c = connect()
+def delete(url, server=None):
+    c = connect(server)
     c.request("DELETE", url)
     return c.getresponse()

@@ -33,46 +33,52 @@ def pull(url):
     # name: a blueprint name; it may not contain whitespace or / characters.
     # sha: a 40-byte hexadecimal representation of a SHA1 sum.
 
-    with context_managers.mkdtemp():
-        r = requests.get(url)
+    pieces = urlparse.urlparse(url)
+    server = pieces.netloc
+    url = pieces.path
 
-        if r.status_code == 200:
-            b = Blueprint(name = urlparse.urlparse(url).path.rpartition('/')[2])
-            b.update(json.loads(r.content))
+    with context_managers.mkdtemp():
+        r = http.get(url, {}, server)
+        logging.info("Connected to server")
+        if r.status == 200:
+            b = Blueprint()
+            b.name = name = pieces.path.rpartition('/')[2]
+            b.update(json.loads(r.read()))
+            logging.info("Blueprint JSON pulled, checking for tarballs")
 
             for filename in b.sources.itervalues():
-                r = requests.get(url + '/' + filename)
+                r = http.get(url + '/' + filename, {}, server)
+                logging.info("Blueprint tarball pulled")
 
-                if r.status_code == 200:
+                if r.status == 200:
                     try:
                         tarfile = open(filename, 'w')
-                        tarfile.write(r.content)
+                        tarfile.write(r.read())
                     except OSError:
                         return
                     finally:
                         tarfile.close()
 
-                elif r.status_code == 404:
+                elif r.status == 404:
                     logging.error("[404] The sha tarball was not found")
                     return
 
-                elif r.status_code == 502:
+                elif r.status == 502:
                     logging.error("[502] The upstream storage service failed and the blueprint was not pulled")
                     return
 
                 else:
-                    logging.error("[%s] GET error retreiving blueprint files" % r.status_code)
+                    logging.error("[%s] GET error retreiving blueprint files" % r.status)
                     return
 
             b.commit('')
 
-        elif r.status_code == 404:
-            logging.error("[404] A blueprint could not be pulled from %s" % url)
+        elif r.status == 404:
+            logging.error("[404] A blueprint could not be pulled from %s" % pieces.netloc + pieces.path)
             return
 
         else:
-            logging.error("[%s] GET error" % r.status_code)
-            logging.error(r.history)
+            logging.error("[%s] GET error" % r.status)
             return
 
     return
