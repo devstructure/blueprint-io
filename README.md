@@ -1,6 +1,6 @@
 # Blueprint I/O
 
-Blueprint I/O pushes and pulls blueprints to and from a remote Blueprint I/O Server.  DevStructure provides the default Blueprint I/O Server at <https://devstructure.com> free of charge, which stores blueprints in Amazon S3.
+Blueprint I/O pushes and pulls blueprints to and from a remote Blueprint I/O Server, making it easy to share and reuse blueprints on different machines.  DevStructure provides a free Blueprint I/O Server at <https://devstructure.com>, which stores blueprints in Amazon S3.  Alternatively, you can supply your own backend server.
 
 ## Installation
 
@@ -56,6 +56,7 @@ Tutorials will land in the [documentation](https://devstructure.com/docs/) soon.
 
 * [blueprint-push(1)](http://devstructure.github.com/blueprint-io/blueprint-push.1.html)
 * [blueprint-pull(1)](http://devstructure.github.com/blueprint-io/blueprint-pull.1.html)
+* [blueprint-io(7)](http://devstructure.github.com/blueprint-io/blueprint-io.7.html)
 
 ## Contribute
 

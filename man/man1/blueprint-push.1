@@ -1,22 +1,29 @@
 .\" generated with Ronn/v0.7.3
 .\" http://github.com/rtomayko/ronn/tree/0.7.3
 .
-.TH "BLUEPRINT\-IO" "7" "June 2011" "DevStructure" "Blueprint I/O"
+.TH "BLUEPRINT\-PUSH" "1" "June 2011" "DevStructure" "Blueprint I/O"
 .
 .SH "NAME"
-\fBblueprint\-io\fR \- push and pull blueprints
+\fBblueprint\-push\fR \- push a blueprint to the Internet
 .
 .SH "SYNOPSIS"
-.
-.nf
-
-blueprint push foo
-blueprint pull https://devstructure\.com/0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz_\-/foo
-.
-.fi
+\fBblueprint push\fR [\fB\-q\fR] \fIname\fR
 .
 .SH "DESCRIPTION"
-Blueprint I/O pushes and pulls blueprints to and from a remote Blueprint I/O Server, making it easy to share and reuse blueprints on different machines\. DevStructure provides a free Blueprint I/O Server at \fIhttps://devstructure\.com\fR, which stores blueprints in Amazon S3\. Alternatively, you can supply your own backend server\.
+\fBblueprint\-push\fR stores the blueprint \fIname\fR and all associated tarballs as \fIname\fR on the configured server (which is \fBhttps://devstructure\.com\fR by default) and prints the URL from which it may be fetched\.
+.
+.P
+If no \fIsecret\fR is configured in \fB/etc/blueprint\-io\.cfg\fR or \fB~/\.blueprint\-io\.cfg\fR, one is created and a sample configuration is printed\.
+.
+.SH "OPTIONS"
+.
+.TP
+\fB\-q\fR, \fB\-\-quiet\fR
+Operate quietly\.
+.
+.TP
+\fB\-h\fR, \fB\-\-help\fR
+Show a help message\.
 .
 .SH "FILES"
 .
@@ -53,4 +60,4 @@ Girl Talk \- "Let It Out"
 Matt Tanase \fImatt@devstructure\.com\fR and Richard Crowley \fIrichard@devstructure\.com\fR
 .
 .SH "SEE ALSO"
-\fBblueprint\-push\fR(1) and \fBblueprint\-pull\fR(1), which \fBblueprint\-io\fR adds to the \fBblueprint\fR(1) suite\.
+\fBblueprint\-push\fR(1) and \fBblueprint\-pull\fR(1), which \fBblueprint\-io\fR(7) adds to the \fBblueprint\fR(1) suite\.
