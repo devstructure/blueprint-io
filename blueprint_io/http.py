@@ -22,11 +22,10 @@ def get(path, headers={}, server=None):
     c = connect(server)
     c.request('GET', path, None, headers)
     r = c.getresponse()
-    # Handle redirects
-    while r.status in set([301, 302, 307]):
-       url = urlparse.urlparse(r.getheader('location'))
+    while r.status in (301, 302, 307):
+       url = urlparse.urlparse(r.getheader('Location'))
        r = get(url.path,
-               {'Content-Type': r.getheader('content-type')},
+               {'Content-Type': r.getheader('Content-Type')},
                urlparse.urlunparse((url.scheme, url.netloc, '', '', '', '')))
     return r
 
