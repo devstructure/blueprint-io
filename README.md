@@ -36,7 +36,7 @@ wget -O - http://packages.devstructure.com/keyring.gpg | sudo apt-key add -
 sudo apt-get update
 sudo apt-get -y install blueprint-io</pre>
 
-Replace _`distro`_ with "`debian`" or "`ubuntu`" and _`release`_ with "`lenny`", "`squeeze`", "`lucid`", "`maverick`", or "`natty`" as your situation requires.
+Replace <code><em>distro</em></code> with "`debian`" or "`ubuntu`" and <code><em>release</em></code> with "`lenny`", "`squeeze`", "`lucid`", "`maverick`", or "`natty`" as your situation requires.
 
 ### From PyPI
 
