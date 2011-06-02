@@ -52,9 +52,9 @@ Tutorials and API details will land in the [documentation](https://devstructure.
 
 ## Manuals
 
-* [blueprint-push(1)](http://devstructure.github.com/blueprint-io/blueprint-push.1.html)
-* [blueprint-pull(1)](http://devstructure.github.com/blueprint-io/blueprint-pull.1.html)
-* [blueprint-io(7)](http://devstructure.github.com/blueprint-io/blueprint-io.7.html)
+* [`blueprint-push`(1)](http://devstructure.github.com/blueprint-io/blueprint-push.1.html)
+* [`blueprint-pull`(1)](http://devstructure.github.com/blueprint-io/blueprint-pull.1.html)
+* [`blueprint-io`(7)](http://devstructure.github.com/blueprint-io/blueprint-io.7.html)
 
 ## Contribute
 
