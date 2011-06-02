@@ -50,3 +50,4 @@ with context_managers.mkdtemp():
         sys.exit(1)
     if b is not None:
         b.commit(options.message or '')
+        logging.warning("completed - blueprint stored locally and ready for use")
