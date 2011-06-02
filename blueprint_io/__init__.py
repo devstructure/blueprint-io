@@ -20,6 +20,7 @@ def pull(server, secret, name):
         b.update(json.loads(r.read()))
 
         for filename in b.sources.itervalues():
+            logging.info("downloading files")
             r = http.get('/{0}/{1}/{2}'.format(secret, name, filename),
                          server=server)
             if 200 == r.status:
@@ -77,6 +78,7 @@ def push(server, secret, b):
     for dirname, filename in sorted(b.sources.iteritems()):
         blob = git.blob(tree, filename)
         content = git.content(blob)
+        logging.info("uploading files")
         r = http.put('/{0}/{1}/{2}'.format(secret, b.name, filename),
                      content,
                      {'Content-Type': 'application/x-tar'},
@@ -107,7 +109,7 @@ def secret(server):
     if 201 == r.status:
         secret = r.read().rstrip()
         logging.warning('created secret {0}'.format(secret))
-        logging.warning('store it in ~/.blueprint-io.cfg:')
+        logging.warning('to set as the default secret, store it in ~/.blueprint-io.cfg:')
         sys.stderr.write('\n[default]\nsecret = {0}\nserver = {1}\n\n'.
             format(secret, cfg.server()))
         return secret
