@@ -49,7 +49,8 @@ Girl Talk - "Let It Out"
 
 ## AUTHOR
 
-Matt Tanase <matt@devstructure.com> and Richard Crowley <richard@devstructure.com>
+* Matt Tanase <matt@devstructure.com>
+* Richard Crowley <richard@devstructure.com>
 
 ## SEE ALSO
 
