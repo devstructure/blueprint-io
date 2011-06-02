@@ -5,7 +5,6 @@ import optparse
 import re
 import sys
 import urlparse
-import string
 
 import blueprint
 from blueprint import context_managers
@@ -13,11 +12,7 @@ import blueprint_io
 from blueprint_io import cfg
 
 parser = optparse.OptionParser(
-    'Usage: %prog [-s <secret>] [-m <message>] [-q] <name>|<url>')
-parser.add_option('-s', '--secret',
-                  dest='secret',
-                  default=None,
-                  help='operate quietly')
+    'Usage: %prog [-m <message>] [-q] <name>|<url>')
 parser.add_option('-m', '--message',
                   dest='message',
                   default=None,
@@ -38,9 +33,10 @@ if url.scheme and url.netloc:
     if match is None:
         logging.error('invalid blueprint URL')
         sys.exit(1)
+    server = urlparse.urlunparse((url.scheme, url.netloc, '', '', '', ''))
     secret, name = match.group(1, 2)
 else:
-    secret = options.secret or cfg.secret()
+    server, secret = cfg.server(), cfg.secret()
     if secret is None:
         logging.error('secret not found')
         sys.exit(1)
@@ -48,7 +44,7 @@ else:
 
 with context_managers.mkdtemp():
     try:
-        b = blueprint_io.pull(secret, name)
+        b = blueprint_io.pull(server, secret, name)
     except ValueError:
         logging.error('invalid blueprint name')
         sys.exit(1)

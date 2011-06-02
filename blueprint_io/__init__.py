@@ -1,4 +1,3 @@
-import cfg
 import json
 import logging
 import sys
@@ -10,36 +9,19 @@ from blueprint import context_managers
 import http
 
 
-server = cfg.server()
-
-
-def pull(secret, name):
+def pull(server, secret, name):
     """
     Pull a blueprint from the secret and name on the configured server.
     """
-
-    # GET /secret/name
-    # Fetch the JSON representation of the blueprint name.
-    # 
-    # Parameters:
-    # secret: a 64-byte identifier containing numbers, letters, underscores, and dashes.
-    # name: a blueprint name; it may not contain whitespace or / characters.
-    #
-    # GET /secret/name/sha.tar
-    # Fetch a source tarball referenced by blueprint name.
-    # 
-    # Parameters:
-    # secret: a 64-byte identifier containing numbers, letters, underscores, and dashes.
-    # name: a blueprint name; it may not contain whitespace or / characters.
-    # sha: a 40-byte hexadecimal representation of a SHA1 sum.
-    r = http.get('/{0}/{1}'.format(secret, name))
+    r = http.get('/{0}/{1}'.format(secret, name), server=server)
     if 200 == r.status:
         b = Blueprint()
         b.name = name
         b.update(json.loads(r.read()))
 
         for filename in b.sources.itervalues():
-            r = http.get('/{0}/{1}/{2}'.format(secret, name, filename))
+            r = http.get('/{0}/{1}/{2}'.format(secret, name, filename),
+                         server=server)
             if 200 == r.status:
                 try:
                     f = open(filename, 'w')
@@ -70,20 +52,15 @@ def pull(secret, name):
     return None
 
 
-def push(secret, b):
+def push(server, secret, b):
     """
     Push a blueprint to the secret and its name on the configured server.
     """
 
-    # PUT /secret/name
-    #  Store the JSON representation of the blueprint name. The Content-Type of the body must be application/json.
-    # 
-    #  Parameters:
-    #  secret: a 64-byte identifier containing numbers, letters, underscores, and dashes.
-    #  name: a blueprint name; it may not contain whitespace or / characters.
     r = http.put('/{0}/{1}'.format(secret, b.name),
                  b.dumps(),
-                 {'Content-Type': 'application/json'})
+                 {'Content-Type': 'application/json'},
+                 server=server)
     if 202 == r.status:
         pass
     elif 400 == r.status:
@@ -96,20 +73,14 @@ def push(secret, b):
         logging.error('unexpected {0} storing blueprint'.format(r.status))
         return None
 
-    # PUT /secret/name/sha.tar
-    # Store a source tarball referenced by blueprint name. The Content-Type of the body must be application/x-tar.
-    # 
-    # Parameters:
-    # secret: a 64-byte identifier containing numbers, letters, underscores, and dashes.
-    # name: a blueprint name; it may not contain whitespace or / characters.
-    # sha: a 40-byte hexadecimal representation of a SHA1 sum.
     tree = git.tree(b._commit)
     for dirname, filename in sorted(b.sources.iteritems()):
         blob = git.blob(tree, filename)
         content = git.content(blob)
         r = http.put('/{0}/{1}/{2}'.format(secret, b.name, filename),
                      content,
-                     {'Content-Type': 'application/x-tar'})
+                     {'Content-Type': 'application/x-tar'},
+                     server=server)
         if 202 == r.status:
             pass
         elif 400 == r.status:
@@ -128,11 +99,11 @@ def push(secret, b):
     return '{0}/{1}/{2}'.format(server, secret, b.name)
 
 
-def secret():
+def secret(server):
     """
     Fetch a new secret from the configured server.
     """
-    r = http.get('/secret')
+    r = http.get('/secret', server=server)
     if 201 == r.status:
         secret = r.read().rstrip()
         logging.warning('created secret {0}'.format(secret))

@@ -3,36 +3,50 @@ import urlparse
 
 import cfg
 
+
 def connect(server):
     if not server:
-        server = urlparse.urlparse(cfg.server()).netloc
-    return httplib.HTTPConnection(server)
+        server = cfg.server()
+    url = urlparse.urlparse(server)
+    if -1 == url.netloc.find(':'):
+        port = url.port or 443 if 'https' == url.scheme else 80
+    else:
+        port = None
+    if 'https' == url.scheme:
+        return httplib.HTTPSConnection(url.netloc, port)
+    else:
+        return httplib.HTTPConnection(url.netloc, port)
 
-def get(url, headers={}, server=None):
+
+def get(path, headers={}, server=None):
     c = connect(server)
-    c.request("GET", url, None, headers)
+    c.request('GET', path, None, headers)
     r = c.getresponse()
     # Handle redirects
     while r.status in set([301, 302, 307]):
-       pieces = urlparse.urlparse(r.getheader('location'))
-       headers = {'Content-type': r.getheader('content-type')}
-       r = get(pieces.path, headers, pieces.netloc)
+       url = urlparse.urlparse(r.getheader('location'))
+       r = get(url.path,
+               {'Content-Type': r.getheader('content-type')},
+               urlparse.urlunparse((url.scheme, url.netloc, '', '', '', '')))
     return r
 
-def post(url, body, headers={}, server=None):
+
+def post(path, body, headers={}, server=None):
     c = connect(server)
-    c.request('POST', url, body, headers)
+    c.request('POST', path, body, headers)
     return c.getresponse()
 
-def put(url, body, headers={}, server=None):
+
+def put(path, body, headers={}, server=None):
     c = connect(server)
     if len(body) > 0:
-        c.request("PUT", url, body, headers)
+        c.request('PUT', path, body, headers)
     else:
-        c.request("PUT", url, body)
+        c.request('PUT', path, body)
     return c.getresponse()
 
-def delete(url, server=None):
+
+def delete(path, server=None):
     c = connect(server)
-    c.request("DELETE", url)
+    c.request('DELETE', path)
     return c.getresponse()
