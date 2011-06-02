@@ -1,13 +1,26 @@
 # Blueprint I/O
 
-Blueprint I/O pushes and pulls blueprints to and from a remote Blueprint I/O Server.  DevStructure provides the default Blueprint I/O Server at <https://devstructure.com> free of charge, which stores blueprints in Amazon S3.
+Blueprint I/O pushes and pulls blueprints to and from a remote Blueprint I/O Server, making it easy to share and reuse blueprints on different machines. DevStructure provides a free Blueprint I/O Server at <https://devstructure.com>, which stores blueprints in Amazon S3. Alternatively, you can supply your own backend server.
+
+## Usage
+
+### Push a blueprint
+
+    blueprint push my-first-blueprint
+    
+The blueprint and its files are stored remotely. You get a secret URL for accessing it.
+	
+### Pull a blueprint
+
+    blueprint pull https://devstructure.com/MY-SECRET-KEY/my-first-blueprint
+    
+The blueprint is stored locally and ready for use.
 
 ## Installation
 
 Prerequisites:
 
-* A Debian- or RPM-based Linux distribution such as Debian, Ubuntu, Fedora, CentOS, or RHEL
-* Python >= 2.6
+* A Debian- or RPM-based Linux distribution with Python >= 2.6
 * [Blueprint](https://github.com/devstructure/blueprint)
 
 ### From source on Debian, Ubuntu, and Fedora
@@ -28,29 +41,15 @@ Prerequisites:
 
 This installs Python 2.6 from EPEL side-by-side with Python 2.4 and so won't break yum.
 
-### From DevStructure's Debian archive
-
-<pre>echo "deb http://packages.devstructure.com/<em>distro</em> <em>release</em> main" \
-	| sudo tee /etc/apt/sources.list.d/devstructure.list
-wget -O - http://packages.devstructure.com/keyring.gpg | sudo apt-key add -
-sudo apt-get update
-sudo apt-get -y install blueprint-io</pre>
-
-Replace <code><em>distro</em></code> with "`debian`" or "`ubuntu`" and <code><em>release</em></code> with "`lenny`", "`squeeze`", "`lucid`", "`maverick`", or "`natty`" as your situation requires.
-
 ### From PyPI
 
 	pip install blueprint_io
 
 Make sure `pip` is using Python >= 2.6, otherwise the installation will succeed but `blueprint` will not run.
 
-## Push your first blueprint
-
-	blueprint push my-first-blueprint
-
 ## Documentation
 
-Tutorials will land in the [documentation](https://devstructure.com/docs/) soon.
+Tutorials and API details will land in the [documentation](https://devstructure.com/docs/) soon.
 
 ## Manuals
 
