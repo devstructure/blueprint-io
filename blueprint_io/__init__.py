@@ -20,7 +20,7 @@ def pull(server, secret, name):
         b.update(json.loads(r.read()))
 
         for filename in b.sources.itervalues():
-            logging.info("downloading files")
+            logging.info('fetching source tarballs - this may take a while')
             r = http.get('/{0}/{1}/{2}'.format(secret, name, filename),
                          server=server)
             if 200 == r.status:
@@ -39,8 +39,8 @@ def pull(server, secret, name):
                 logging.error('upstream storage service failed')
                 return None
             else:
-                logging.error('unexpected {0} fetching tarball'
-                              ''.format(r.status))
+                logging.error('unexpected {0} fetching tarball'.
+                              format(r.status))
                 return None
 
         return b
@@ -78,7 +78,7 @@ def push(server, secret, b):
     for dirname, filename in sorted(b.sources.iteritems()):
         blob = git.blob(tree, filename)
         content = git.content(blob)
-        logging.info("uploading files")
+        logging.info('storing source tarballs - this may take a while')
         r = http.put('/{0}/{1}/{2}'.format(secret, b.name, filename),
                      content,
                      {'Content-Type': 'application/x-tar'},
