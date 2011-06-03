@@ -1,6 +1,13 @@
 # Blueprint I/O
 
-Blueprint I/O pushes and pulls blueprints to and from a remote Blueprint I/O Server, making it easy to share and reuse blueprints on different machines. DevStructure provides a free Blueprint I/O Server at <https://devstructure.com>, which stores blueprints in Amazon S3. Alternatively, you can supply your own backend server.
+## `blueprint-io` moves blueprints around
+
+* Centralized configuration management.
+* Export and backup server configurations.
+* Push and pull blueprints anywhere.
+* Bootstrap servers painlessly.
+
+Blueprint I/O pushes and pulls blueprints to and from a Blueprint I/O Server, making it easy to use blueprints anywhere. DevStructure provides a free Blueprint I/O Server at <https://devstructure.com>, which stores blueprints in Amazon S3. Alternatively, you can build your own backend server using the Blueprint I/O API.
 
 ## Usage
 
@@ -26,26 +33,20 @@ Prerequisites:
 ### From source on Debian, Ubuntu, and Fedora
 
 	git clone git://github.com/devstructure/blueprint.git
-	(cd blueprint && make && sudo make install)
+	cd blueprint && make && sudo make install
 	git clone git://github.com/devstructure/blueprint-io.git
-	(cd blueprint-io && make && sudo make install)
+	cd blueprint-io && make && sudo make install
 
 ### From source on CentOS and RHEL
 
 	rpm -Uvh http://download.fedora.redhat.com/pub/epel/5/i386/epel-release-5-4.noarch.rpm
 	yum install python26
 	git clone git://github.com/devstructure/blueprint.git
-	(cd blueprint && make && sudo make install PYTHON=/usr/bin/python26)
+	cd blueprint && make && sudo make install PYTHON=/usr/bin/python26
 	git clone git://github.com/devstructure/blueprint-io.git
-	(cd blueprint-io && make && sudo make install PYTHON=/usr/bin/python26)
+	cd blueprint-io && make && sudo make install PYTHON=/usr/bin/python26
 
 This installs Python 2.6 from EPEL side-by-side with Python 2.4 and so won't break yum.
-
-### From PyPI
-
-	pip install blueprint_io
-
-Make sure `pip` is using Python >= 2.6, otherwise the installation will succeed but `blueprint` will not run.
 
 ## Documentation
 
