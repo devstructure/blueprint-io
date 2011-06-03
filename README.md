@@ -1,6 +1,6 @@
 # Blueprint I/O
 
-## `blueprint-io` moves blueprints around
+## Blueprint I/O moves blueprints around
 
 * Centralized configuration management.
 * Export and backup server configurations.
