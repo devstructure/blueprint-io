@@ -39,8 +39,8 @@ install-lib:
 install-man:
 	install -d $(DESTDIR)$(mandir)/man1
 	install -m644 \
-		man/man7/blueprint-push.1 \
-		man/man7/blueprint-pull.1 \
+		man/man1/blueprint-push.1 \
+		man/man1/blueprint-pull.1 \
 		$(DESTDIR)$(mandir)/man1/
 	install -d $(DESTDIR)$(mandir)/man7
 	install -m644 man/man7/blueprint-io.7 $(DESTDIR)$(mandir)/man7/
@@ -64,8 +64,8 @@ uninstall-lib:
 
 uninstall-man:
 	rm -f \
-		$(DESTDIR)$(mandir)/man7/blueprint-push.1 \
-		$(DESTDIR)$(mandir)/man7/blueprint-pull.1
+		$(DESTDIR)$(mandir)/man1/blueprint-push.1 \
+		$(DESTDIR)$(mandir)/man1/blueprint-pull.1
 	rmdir -p --ignore-fail-on-non-empty $(DESTDIR)$(mandir)/man1
 	rm -f $(DESTDIR)$(mandir)/man7/blueprint-io.7
 	rmdir -p --ignore-fail-on-non-empty $(DESTDIR)$(mandir)/man7
