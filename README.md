@@ -55,7 +55,9 @@ DevStructure maintains Debian packages and Python eggs for Blueprint I/O.  See [
 
 ## Documentation
 
-Tutorials and API details will land in the [documentation](https://devstructure.com/docs/) soon.
+Tutorials will land in the [documentation](https://devstructure.com/docs/) soon.
+
+The HTTP [endpoints](https://devstructure.com/docs/endpoints.html) and [protocols](https://devstructure.com/docs/protocols.html) used by Blueprint I/O are documented so that others may run servers compatible with Blueprint I/O Server.
 
 ## Manuals
 
