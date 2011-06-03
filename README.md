@@ -15,7 +15,7 @@ Blueprint I/O pushes and pulls blueprints to and from a Blueprint I/O Server, ma
 
     blueprint push my-first-blueprint
     
-The blueprint and its files are stored remotely. You get a secret URL for accessing it.
+The blueprint and its files are stored remotely.  You get a secret URL for accessing it.
 	
 ### Pull a blueprint
 
@@ -27,7 +27,8 @@ The blueprint is stored locally and ready for use.
 
 Prerequisites:
 
-* A Debian- or RPM-based Linux distribution with Python >= 2.6
+* A Debian- or RPM-based Linux distribution
+* Python >= 2.6
 * [Blueprint](https://github.com/devstructure/blueprint)
 
 ### From source on Debian, Ubuntu, and Fedora
@@ -48,14 +49,19 @@ Prerequisites:
 
 This installs Python 2.6 from EPEL side-by-side with Python 2.4 and so won't break yum.
 
+### With a package manager
+
+DevStructure maintains Debian packages and Python eggs for Blueprint I/O.  See [Installing with a package manager](https://github.com/devstructure/blueprint-io/wiki/Installing-with-a-package-manager) on the wiki.
+
 ## Documentation
 
 Tutorials and API details will land in the [documentation](https://devstructure.com/docs/) soon.
 
 ## Manuals
 
-* [blueprint-push(1)](http://devstructure.github.com/blueprint-io/blueprint-push.1.html)
-* [blueprint-pull(1)](http://devstructure.github.com/blueprint-io/blueprint-pull.1.html)
+* [`blueprint-push`(1)](http://devstructure.github.com/blueprint-io/blueprint-push.1.html)
+* [`blueprint-pull`(1)](http://devstructure.github.com/blueprint-io/blueprint-pull.1.html)
+* [`blueprint-io`(7)](http://devstructure.github.com/blueprint-io/blueprint-io.7.html)
 
 ## Contribute
 
