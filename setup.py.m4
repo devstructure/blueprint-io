@@ -7,6 +7,6 @@ setup(name='blueprint_io',
       author_email='richard@devstructure.com',
       url='http://devstructure.com/',
       packages=find_packages(),
-      install_requires=['blueprint'],
+      install_requires=['blueprint >= 3.0.5'],
       license='BSD',
       zip_safe=False)
