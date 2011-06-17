@@ -91,6 +91,9 @@ def push(server, secret, b):
         elif 404 == r.status:
             logging.error('blueprint not found')
             return None
+        elif 413 == r.status:
+            logging.error('tarballs can\'t exceed 64MB')
+            return None
         elif 502 == r.status:
             logging.error('upstream storage service failed')
             return None

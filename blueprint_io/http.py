@@ -1,11 +1,13 @@
+import errno
 import httplib
+import socket
 import urlparse
 
 import cfg
 
 
-def connect(server):
-    if not server:
+def _connect(server=None):
+    if server is None:
         server = cfg.server()
     url = urlparse.urlparse(server)
     if -1 == url.netloc.find(':'):
@@ -16,6 +18,20 @@ def connect(server):
         return httplib.HTTPSConnection(url.netloc, port)
     else:
         return httplib.HTTPConnection(url.netloc, port)
+
+
+def _request(verb, path, body=None, headers={}, server=None):
+    c = _connect(server)
+    try:
+        c.request(verb, path, body, headers)
+    except socket.error as e:
+        if errno.EPIPE != e.errno:
+            raise e
+    return c.getresponse()
+
+
+def delete(path, server=None):
+    return _request('DELETE', path, server=server)
 
 
 def get(path, headers={}, server=None):
@@ -31,18 +47,8 @@ def get(path, headers={}, server=None):
 
 
 def post(path, body, headers={}, server=None):
-    c = connect(server)
-    c.request('POST', path, body, headers)
-    return c.getresponse()
+    return _request('POST', path, body, headers, server)
 
 
 def put(path, body, headers={}, server=None):
-    c = connect(server)
-    c.request('PUT', path, body, headers)
-    return c.getresponse()
-
-
-def delete(path, server=None):
-    c = connect(server)
-    c.request('DELETE', path)
-    return c.getresponse()
+    return _request('PUT', path, body, headers, server)
