@@ -38,10 +38,7 @@ def post(path, body, headers={}, server=None):
 
 def put(path, body, headers={}, server=None):
     c = connect(server)
-    if len(body) > 0:
-        c.request('PUT', path, body, headers)
-    else:
-        c.request('PUT', path, body)
+    c.request('PUT', path, body, headers)
     return c.getresponse()
 
 
