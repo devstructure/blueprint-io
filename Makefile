@@ -98,13 +98,13 @@ deploy-deb:
 	ssh -i ~/production.pem -t ubuntu@packages.devstructure.com "rm blueprint-io_$(VERSION)-$(BUILD)py$(PYTHON_VERSION)_all.deb"
 
 deploy-deb-2.6:
-	ssh -i ~/production.pem -t ubuntu@packages.devstructure.com "reprepro-includedeb debian lenny blueprint-io_$(VERSION)-$(BUILD)py$(PYTHON_VERSION)_all.deb"
-	ssh -i ~/production.pem -t ubuntu@packages.devstructure.com "reprepro-includedeb debian squeeze blueprint-io_$(VERSION)-$(BUILD)py$(PYTHON_VERSION)_all.deb"
-	ssh -i ~/production.pem -t ubuntu@packages.devstructure.com "reprepro-includedeb ubuntu lucid blueprint-io_$(VERSION)-$(BUILD)py$(PYTHON_VERSION)_all.deb"
-	ssh -i ~/production.pem -t ubuntu@packages.devstructure.com "reprepro-includedeb ubuntu maverick blueprint-io_$(VERSION)-$(BUILD)py$(PYTHON_VERSION)_all.deb"
+	ssh -i ~/production.pem -t ubuntu@packages.devstructure.com "sudo freight add blueprint-io_$(VERSION)-$(BUILD)py$(PYTHON_VERSION)_all.deb apt/lenny apt/squeeze apt/lucid apt/maverick"
+	ssh -i ~/production.pem -t ubuntu@packages.devstructure.com "sudo freight cache apt/lenny apt/squeeze apt/lucid apt/maverick"
+
 
 deploy-deb-2.7:
-	ssh -i ~/production.pem -t ubuntu@packages.devstructure.com "reprepro-includedeb ubuntu natty blueprint-io_$(VERSION)-$(BUILD)py$(PYTHON_VERSION)_all.deb"
+	ssh -i ~/production.pem -t ubuntu@packages.devstructure.com "sudo freight add blueprint-io_$(VERSION)-$(BUILD)py$(PYTHON_VERSION)_all.deb apt/natty"
+	ssh -i ~/production.pem -t ubuntu@packages.devstructure.com "sudo freight cache apt/natty"
 
 deploy-pypi:
 	$(PYTHON) setup.py sdist upload
