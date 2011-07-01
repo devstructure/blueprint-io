@@ -35,7 +35,7 @@ def delete(path, server=None):
 
 
 def get(path, headers={}, server=None):
-    c = connect(server)
+    c = _connect(server)
     c.request('GET', path, None, headers)
     r = c.getresponse()
     while r.status in (301, 302, 307):
