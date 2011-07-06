@@ -1,5 +1,5 @@
 VERSION=0.1.1
-BUILD=1
+BUILD=2
 
 PYTHON=$(shell which python2.7 || which python27 || which python2.6 || which python26 || which python)
 PYTHON_VERSION=$(shell ${PYTHON} -c "from distutils.sysconfig import get_python_version; print(get_python_version())")
@@ -23,8 +23,16 @@ install: install-bin install-lib install-man
     
 install-bin:
 	install -d $(DESTDIR)$(bindir)
-	install bin/blueprint-pull $(DESTDIR)$(bindir)/
-	install bin/blueprint-push $(DESTDIR)$(bindir)/
+	for PROGNAME in \
+		blueprint-pull \
+		blueprint-push \
+	; do \
+		{ \
+			echo "#!$(PYTHON)"; \
+			tail -n+2 bin/$$PROGNAME; \
+		} >$(DESTDIR)$(bindir)/$$PROGNAME; \
+		chmod 755 $(DESTDIR)$(bindir)/$$PROGNAME; \
+	done
 
 install-lib:
 	install -d $(DESTDIR)$(pydir)/blueprint_io
