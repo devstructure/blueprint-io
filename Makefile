@@ -78,23 +78,20 @@ uninstall-man:
 	rm -f $(DESTDIR)$(mandir)/man7/blueprint-io.7
 	rmdir -p --ignore-fail-on-non-empty $(DESTDIR)$(mandir)/man7
 
-build:
-	sudo make deb
-	make pypi
+build: build-deb build-pypi
 
-deb:
-	[ "$$(whoami)" = "root" ] || false
-	m4 \
-		-D__PYTHON__=python$(PYTHON_VERSION) \
-		-D__VERSION__=$(VERSION)-$(BUILD)py$(PYTHON_VERSION) \
-		control.m4 >control
-	debra create debian control
+build-deb:
 	make install prefix=/usr DESTDIR=debian
-	chown -R root:root debian
-	debra build debian blueprint-io_$(VERSION)-$(BUILD)py$(PYTHON_VERSION)_all.deb
-	debra destroy debian
+	fpm -s dir -t deb -C debian \
+		-n blueprint-io -v $(VERSION)-$(BUILD)py$(PYTHON_VERSION) -a all \
+		-d "blueprint (>= 3.0.5)" \
+		-d python$(PYTHON_VERSION) \
+		-m "Richard Crowley <richard@devstructure.com>" \
+		--url "https://github.com/devstructure/blueprint-io" \
+		--description "Centralized blueprint service client."
+	make uninstall prefix=/usr DESTDIR=debian
 
-pypi:
+build-pypi:
 	m4 -D__VERSION__=$(VERSION) setup.py.m4 >setup.py
 	$(PYTHON) setup.py bdist_egg
 
